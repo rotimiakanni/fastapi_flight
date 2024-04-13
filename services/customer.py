@@ -1,4 +1,5 @@
-from schema.customer import customers, Customers, CustomersCreate
+from fastapi import HTTPException
+from schema.customer import customers, Customers, CustomersCreateEdit
 
 class CustomerSerivce:
 
@@ -11,10 +12,13 @@ class CustomerSerivce:
     
     @staticmethod
     def get_customer_by_id(customer_id):
-        return customers[customer_id]
+        customer = customers.get(customer_id)
+        if not customer:
+            raise HTTPException(detail='Customer not found.', status_code=404)
+        return customer
     
     @staticmethod
-    def create_customer(customer_data: CustomersCreate):
+    def create_customer(customer_data: CustomersCreateEdit):
         id = len(customers)
         customer = Customers(
             id=id,
@@ -22,3 +26,20 @@ class CustomerSerivce:
         )
         customers[id] = customer
         return customer
+    
+    @staticmethod
+    def edit_customer(payload: CustomersCreateEdit):
+        id = len(customers)
+        customer = Customers(
+            id=id,
+            **payload.model_dump()
+        )
+        customers[id] = customer
+        return customer
+    
+    @staticmethod
+    def delete_customer(customer_id: int):
+        customer = customers.get(customer_id)
+        if not customer:
+            raise HTTPException(detail='Customer not found.', status_code=404)
+        del customers[customer_id]

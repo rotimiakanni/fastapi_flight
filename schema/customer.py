@@ -6,7 +6,7 @@ class Customers(BaseModel):
     age: int
     phone: str
 
-class CustomersCreate(BaseModel):
+class CustomersCreateEdit(BaseModel):
     name: str
     age: int
     phone: str
